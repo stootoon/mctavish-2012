@@ -128,8 +128,8 @@ def raster(pair=[0,4], cluster_width=5, fi=.005, xlim=(1000,2000)):
     dt = 1
     tstop = xlim[1]
     x = numpy.arange(0,tstop,dt)
-    y0 = numpy.zeros(tstop/dt)
-    y1 = numpy.zeros(tstop/dt)
+    y0 = numpy.zeros(int(tstop/dt))
+    y1 = numpy.zeros(int(tstop/dt))
     EXP = numpy.exp(numpy.multiply(x,-1./200.))-numpy.exp( \
             numpy.multiply(x,-1./20.))
     
@@ -269,5 +269,7 @@ def raster(pair=[0,4], cluster_width=5, fi=.005, xlim=(1000,2000)):
           verticalalignment='baseline')            
 
 #    fig.savefig(os.path.join(analysis_path, 'raster_w%d_(%d-%d)_%.3f.pdf') %(cluster_width, pair[0], pair[1], fi))
-    fig.savefig(os.path.join(analysis_path, 'fig1.pdf'))
+    file_path = os.path.join(analysis_path, 'fig1.pdf')
+    fig.savefig(file_path, bbox_inches='tight', dpi=300)
+    print('Figure saved to %s' % file_path)
 raster()

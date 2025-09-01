@@ -271,7 +271,7 @@ class SynWeightSnapshot:
         for i in r:
             self.plot_slice(i,draw_colorbar,space_colorbar,cmap,figsize,dpi,background_color)
             if i%10==0:
-                print 'slice '+str(i)
+                print('slice '+str(i))
         if self.file_format=='pdf':
             if self.pdf is not None:
                 self.pdf.close()
