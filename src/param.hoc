@@ -28,7 +28,7 @@ default_var("g2m_ranseed", 1)
 default_var_vec("breath_noise_freqs", "40.0, 40.0, 40.0, 30.0, 30.0")
 default_var_str("spike_file_name", "spikeout")
 default_var_vec("stim_odors_seed", "100.0, 101.0, 102.0, 103.0, 104.0")
-tstop=2000
+tstop=20000
 fi_multiplier = 0
 ampanmda_multiplier = 0
 default_var_vec("stim_odors_start", "2.0, 2.0, 2.0, 2.0, 2.0")
