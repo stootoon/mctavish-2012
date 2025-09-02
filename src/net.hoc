@@ -136,7 +136,7 @@ proc create_cells() { local gid, pgid, i, j, nm   localobj cell, nc
 
 proc mknet() {
 	create_cells()
-	connect_cells()
+	connect_cells($1, $2) // $1 is fi multiplier, $2 is ampanmda multiplier
 }
 
 //load_file("control_net_graphics.hoc")

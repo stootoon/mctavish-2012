@@ -10,7 +10,9 @@ objref pc
 pc = new ParallelContext()
 if (pnm.nhost == 1) { execute1("{nthread=pc.nthread(4) cvode.cache_efficient(1) }", 0) }
 {load_file("net.hoc")}
-mknet()
+// Call mknet with parameters for scaling fi and ampanmda
+print("fi_multiplier=", fi_multiplier, " ampanmda_multiplier=", ampanmda_multiplier)
+mknet(fi_multiplier, ampanmda_multiplier) // from param.hoc
 {load_file("stimodors.hoc")}
 create_stim()
 {load_file("perfrun.hoc")}

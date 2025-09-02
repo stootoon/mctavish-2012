@@ -1,11 +1,11 @@
-
 proc connect_cells() {local i, j  localobj cvec
+	// $1 is fi multiplier, $2 is ampanmda multiplier
 	for j=0, num_granule-1 {
 		// g2m_connections require previously specified distribution
 		// parameters
 		cvec = g2m_connections(j)
 		for i=0, cvec.size-1 {
-			mgconnect(cvec.x[i], j, 0)
+			mgconnect(cvec.x[i], j, 0, $1, $2)
 		}
 	}
 }
@@ -151,4 +151,44 @@ func g2m_priden_position() {local saveseed, x  localobj r
 	x = r.uniform(0,1)
 	mcell_ran4_init(saveseed)
 	return x
+}
+
+proc init() {
+    // if $7 == 1 then create fi and ampamda and put in cas
+    ws_str_ = new String()
+    mitral_gid = $1
+    granule_gid = $4
+    mexist = piecegid(mitral_gid) >= 0
+    gexist = piecegid(granule_gid) >= 0
+    md_gid = syn_gid(granule_gid, mitral_gid)
+    gd_gid = syn_gid(mitral_gid, granule_gid)
+    mitral = gid2piece(mitral_gid)
+    granule = gid2piece(granule_gid)
+    fi_multiplier = $8 != 0 ? $8 : 1  // Default to 1 if not provided
+    ampanmda_multiplier = $9 != 0 ? $9 : 1  // Default to 1 if not provided
+
+    if (mexist) if (section_exists($s2, mitral)) {
+        create_syn("{mitral.%s { fi = new FastInhib(%-10.20g )}}",$s2, $3)
+        create_syn("{mitral.%s { md = new ThreshDetect(%-10.20g)}}",$s2, $3)
+        pc.set_gid2node(md_gid, pc.id)
+        pc.cell(md_gid, new NetCon(md, nil), 1)
+        fi.gmax = fi_gmax * fi_multiplier  // Use the multiplier
+        fi.tau1 = fi_tau1
+        fi.tau2 = fi_tau2
+    }
+
+    if (gexist) {
+        spine = new GranuleSpine()
+        create_syn("{granule.%s { connect spine.neck(0), (%-10.20g) }}", $s5, $6)
+        spine.head { ampanmda = new AmpaNmda(0.5) }
+        spine.head { gd = new ThreshDetect(0.5)}
+        pc.set_gid2node(gd_gid, pc.id)
+        pc.cell(gd_gid, new NetCon(gd, nil), 1)
+        ampanmda.gmax = ampanmda_gmax * ampanmda_multiplier  // Use the multiplier
+    }
+
+    if ($7 == 1) { // for showing synapses and weights when cells do not exist
+        complete()
+    }
+    update_netcon()
 }
