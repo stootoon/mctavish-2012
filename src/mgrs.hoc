@@ -43,6 +43,8 @@ public md2ampanmda, gd2fi, spine
 public fi_exists, ampa_exists, mexist, gexist
 public sm, sg, wm, wg, set_sm, set_sg, set_wm, set_wg, ws_str, ws_str_normalized
 public pr
+public fi_multiplier, ampanmda_multiplier
+external fi_gmax, fi_tau1, fi_tau2, ampanmda_gmax
 external pc, pnm, syn_gid, fi_gmax, fi_tau1, fi_tau2, ampanmda_gmax
 external ncell, num_mitral  //, nil,amp, rel, inh,synst, nmdafactor
 external gid2piece, piecegid
@@ -70,13 +72,15 @@ proc init() {
     gd_gid = syn_gid(mitral_gid, granule_gid)
     mitral = gid2piece(mitral_gid)
     granule = gid2piece(granule_gid)
+	fi_multiplier = $8
+	ampanmda_multiplier = $9
     if (mexist) if (section_exists($s2, mitral)) {
 //	print mitral
 	create_syn("{mitral.%s { fi = new FastInhib(%-10.20g )}}",$s2, $3)
 	create_syn("{mitral.%s { md = new ThreshDetect(%-10.20g)}}",$s2, $3)
 	pc.set_gid2node(md_gid, pc.id)
 	pc.cell(md_gid, new NetCon(md, nil), 1)
-        fi.gmax=fi_gmax
+        fi.gmax=fi_gmax * fi_multiplier		// Use the multiplier
         fi.tau1=fi_tau1
         fi.tau2=fi_tau2
     }
@@ -88,7 +92,7 @@ proc init() {
 	spine.head { gd = new ThreshDetect(0.5)}
 	pc.set_gid2node(gd_gid, pc.id)
 	pc.cell(gd_gid, new NetCon(gd, nil), 1)
-        ampanmda.gmax=ampanmda_gmax		//default is 2
+        ampanmda.gmax=ampanmda_gmax	* ampanmda_multiplier	// Use the multiplier
     }
 //    print pnm.myid, this, mexist, gexist
 
@@ -291,10 +295,12 @@ mgrs_list = new List()
 obfunc mk_mgrs() { local  mitral_gid, granule_gid    localobj mgrs
     //$1 is the imitral, $s2 section name, $3 section arc position,
     //$4 is the igranule, $s5 section name, $6 section arc position
+	//$7 if 1 then create even if cells do not exist
+	//$8 fi_multiplier, $9 ampanmda_multiplier
     mitral_gid = $1
     granule_gid = $4 + num_granule_begin
     if ($7 || exists(mitral_gid, $s2) || exists(granule_gid, $s5)) {
-	mgrs = new MGRS(mitral_gid, $s2, $3, granule_gid, $s5, $6, $7)
+	mgrs = new MGRS(mitral_gid, $s2, $3, granule_gid, $s5, $6, $7, $8, $9)
 	mgrs_list.append(mgrs)
 	return mgrs
     }

@@ -103,7 +103,7 @@ def read_delayevents():
     return data
 
 
-def raster(pair=[0,4], cluster_width=5, fi=.005, xlim=(1000,2000)):
+def raster(pair=[0,4], cluster_width=5, fi=.005, xlim=(1000,2000), spikes_file = 'spikeout.spk'):
 #    pos1 = (10+pair[0]*20, cluster_width, 1, pair)
 #    pos2 = (10+pair[1]*20, cluster_width, 1, pair)
 #    stim_odor_mags = numpy.ones(5)*.55
@@ -119,7 +119,7 @@ def raster(pair=[0,4], cluster_width=5, fi=.005, xlim=(1000,2000)):
 
     # Analyze an output file in some_dir
     bulb_spikes = BulbSpikes(sim_time=sim_var['tstop'])
-    bulb_spikes.read_file(os.path.join(homedir,'spikeout.spk'))
+    bulb_spikes.read_file(os.path.join(homedir, spikes_file))
     breath_events = numpy.loadtxt(os.path.join(homedir, 'breathevents.txt'))
 
     wts = read_weightevents()
@@ -202,6 +202,7 @@ def raster(pair=[0,4], cluster_width=5, fi=.005, xlim=(1000,2000)):
     spikes = bulb_spikes.get_mitral_spikes()
     ref=spikes[pair[0]]
     comp=spikes[pair[1]]
+    print(spikes_file, ref[0:10])
     gcspikes = bulb_spikes.get_granule_spikes()
     mididx = 10+pair[0]*20
     gcleft = gcspikes[mididx-int(cluster_width/2.):mididx+int(cluster_width/2.)+1]
@@ -269,7 +270,8 @@ def raster(pair=[0,4], cluster_width=5, fi=.005, xlim=(1000,2000)):
           verticalalignment='baseline')            
 
 #    fig.savefig(os.path.join(analysis_path, 'raster_w%d_(%d-%d)_%.3f.pdf') %(cluster_width, pair[0], pair[1], fi))
-    file_path = os.path.join(analysis_path, 'fig1.pdf')
+    file_path = os.path.join(analysis_path, f'fig1_{spikes_file[:-4]}.pdf')
     fig.savefig(file_path, bbox_inches='tight', dpi=300)
     print('Figure saved to %s' % file_path)
-raster()
+raster(spikes_file='spikeout.spk')
+raster(spikes_file='spikeout_0_0.spk')
