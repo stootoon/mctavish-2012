@@ -81,6 +81,9 @@ class BulbSpikes:
         """
         try:
             self.raw=spiketrain.read_file(fname)
+            print(f"Read {len(self.raw)} spike trains from {fname}")
+            self.mit_spikes = [] # Otherwise get_mitral_spikes will not reload
+            self.gran_spikes = [] 
         except Exception:
             self.raw=None
             raise
